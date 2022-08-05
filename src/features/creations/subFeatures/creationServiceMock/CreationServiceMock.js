@@ -1,18 +1,18 @@
-import geodist          from 'geodist';
-import EateryServiceAPI from '../eateryService/EateryServiceAPI';
-import featureFlags     from 'featureFlags';
+import geodist            from 'geodist';
+import CreationServiceAPI from '../creationService/CreationServiceAPI';
+import featureFlags       from 'featureFlags';
 
 /**
- * EateryServiceMock is the **mock** EateryServiceAPI derivation.
+ * CreationServiceMock is the **mock** CreationServiceAPI derivation.
  * 
  * NOTE: This represents a persistent service of a real-time DB, where
  *       the monitored DB is retained between service invocations.
  */
-export default class EateryServiceMock extends EateryServiceAPI {
+export default class CreationServiceMock extends CreationServiceAPI {
 
   constructor() {
     super();
-    !featureFlags.useWIFI && console.log('***eatery-nod-w*** mocking EateryService (via EateryServiceMock)');
+    !featureFlags.useWIFI && console.log('***creations-website*** mocking CreationService (via CreationServiceMock)');
   }
 
   /**
@@ -21,15 +21,15 @@ export default class EateryServiceMock extends EateryServiceAPI {
   curPoolMonitor = { // current "pool" monitor (initially a placebo) ... similar concept to production
     pool:      null, // type: string
     monitorCB: null, // type: client CB function
-    eateries:  null, // the actual set of eateries in our pool
+    creations:  null, // the actual set of creations in our pool
   };
 
 
-  monitorDbEateryPool(pool, baseLoc, monitorCB) { // ... see EateryServiceAPI
+  monitorDbCreationPool(pool, baseLoc, monitorCB) { // ... see CreationServiceAPI
 
-    // define our initial pool of eateries (a subset of eateriesMockDB)
-    const eateries = initialEateryPoolIds.reduce( (hash, id) => {
-      hash[id] = eateriesMockDB[id];
+    // define our initial pool of creations (a subset of creationsMockDB)
+    const creations = initialCreationPoolIds.reduce( (hash, id) => {
+      hash[id] = creationsMockDB[id];
       return hash;
     }, {});
 
@@ -37,71 +37,71 @@ export default class EateryServiceMock extends EateryServiceAPI {
     this.curPoolMonitor = {
       pool,
       monitorCB,
-      eateries,
+      creations,
     };
 
-    // supplement eateries with distance from the supplied baseLoc (as the crow flies)
+    // supplement creations with distance from the supplied baseLoc (as the crow flies)
     // ... this mock logic is similar to that of production, but we cheat and do it to our entire DB
     //     as a result it doesn't have to be done again
-    for (const eateryId in eateriesMockDB) {
-      const eatery = eateriesMockDB[eateryId];
-      eatery.distance = geodist([eatery.loc.lat, eatery.loc.lng], [baseLoc.lat, baseLoc.lng]);
+    for (const creationId in creationsMockDB) {
+      const creation = creationsMockDB[creationId];
+      creation.distance = geodist([creation.loc.lat, creation.loc.lng], [baseLoc.lat, baseLoc.lng]);
     }
 
     // notify our supplied monitorCB
     // ... NOTE: the API returns void ... it truly is NOT a promise
-    monitorCB(eateries);
+    monitorCB(creations);
 
   }
 
 
-  async addEatery(eatery) { // ... see EateryServiceAPI
+  async addCreation(creation) { // ... see CreationServiceAPI
     // verify we are monitoring a pool
     // ... NOTE: same as production service
     if (!this.curPoolMonitor.pool) {
       // unexpected condition
-      throw new Error('***ERROR*** (within app logic) EateryServiceMock.addEatery(): may only be called once a successful monitorDbEateryPool() has completed.')
-              .defineAttemptingToMsg('add an Eatery to the DB');
+      throw new Error('***ERROR*** (within app logic) CreationServiceMock.addCreation(): may only be called once a successful monitorDbCreationPool() has completed.')
+              .defineAttemptingToMsg('add a Creation to the DB');
     }
 
-    // add the eatery to our DB pool
+    // add the creation to our DB pool
     // NOTE: this must be immutable to allow redux to recognize the change
-    // console.log(`xx addEatery: `, eatery);
-    this.curPoolMonitor.eateries = {
-      ...this.curPoolMonitor.eateries,
-      [eatery.id]: eatery
+    // console.log(`xx addCreation: `, creation);
+    this.curPoolMonitor.creations = {
+      ...this.curPoolMonitor.creations,
+      [creation.id]: creation
     };
 
     // notify our monitorCB
-    this.curPoolMonitor.monitorCB(this.curPoolMonitor.eateries);
+    this.curPoolMonitor.monitorCB(this.curPoolMonitor.creations);
   }
 
 
-  async removeEatery(eateryId) { // ... see EateryServiceAPI
+  async removeCreation(creationId) { // ... see CreationServiceAPI
     // verify we are monitoring a pool
     // ... NOTE: same as production service
     if (!this.curPoolMonitor.pool) {
       // unexpected condition
-      throw new Error('***ERROR*** (within app logic) EateryServiceMock.removeEatery(): may only be called once a successful monitorDbEateryPool() has completed.')
-              .defineAttemptingToMsg('remove an Eatery from the DB');
+      throw new Error('***ERROR*** (within app logic) CreationServiceMock.removeCreation(): may only be called once a successful monitorDbCreationPool() has completed.')
+              .defineAttemptingToMsg('remove a Creation from the DB');
     }
 
-    // remove the eatery to our DB pool
+    // remove the creation to our DB pool
     // NOTE: this must be immutable to allow redux to recoginize the change
-    // console.log(`xx removeEatery: ${eateryId}`);
-    const eateries = Object.assign({}, this.curPoolMonitor.eateries);
-    delete eateries[eateryId];
-    this.curPoolMonitor.eateries = eateries;
+    // console.log(`xx removeCreation: ${creationId}`);
+    const creations = Object.assign({}, this.curPoolMonitor.creations);
+    delete creations[creationId];
+    this.curPoolMonitor.creations = creations;
 
     // notify our monitorCB
-    this.curPoolMonitor.monitorCB(this.curPoolMonitor.eateries);
+    this.curPoolMonitor.monitorCB(this.curPoolMonitor.creations);
   }
 
 };
 
 
-// our initial pool of eateries (a subset of eateriesMockDB)
-const initialEateryPoolIds = [
+// our initial pool of creations (a subset of creationsMockDB)
+const initialCreationPoolIds = [
   "ChIJ2_bmEw6vIIYRS7ztDnnLpNg",
   "ChIJaVmoJg6vIIYR9iB3FoxFfEQ",
   "ChIJ6yNtftWuIIYRJrESGu4C5fM",
@@ -124,8 +124,8 @@ const initialEateryPoolIds = [
   "ChIJ76kBGjFcJ4YRwmBQteVXEyk",
 ];
 
-// our MOCK eateries DB pool
-export const eateriesMockDB = {
+// our MOCK creations DB pool
+export const creationsMockDB = {
   "ChIJ-6rxFimpIIYRCrq8YVb3Ujs": {
     "addr": "2000 Lakeshore Dr Uc250, New Orleans, LA 70148, USA",
     "id": "ChIJ-6rxFimpIIYRCrq8YVb3Ujs",
@@ -801,14 +801,14 @@ export const discoverySearchPage2 = {
   pagetoken: null, // no mo pages
   discoveries: []
 };
-const discoveryPagingDivision_eateryId = "ChIJTz6VoQumIIYRAXvVrezBp-U";
+const discoveryPagingDivision_creationId = "ChIJTz6VoQumIIYRAXvVrezBp-U";
 let divisionHit = false;
-for (const eateryId in eateriesMockDB) {
-  const eatery = eateriesMockDB[eateryId];
-  if (eatery.id === discoveryPagingDivision_eateryId)
+for (const creationId in creationsMockDB) {
+  const creation = creationsMockDB[creationId];
+  if (creation.id === discoveryPagingDivision_creationId)
     divisionHit = true;
   if (!divisionHit) 
-    discoverySearchPage1.discoveries.push(eatery);
+    discoverySearchPage1.discoveries.push(creation);
   else
-    discoverySearchPage2.discoveries.push(eatery);
+    discoverySearchPage2.discoveries.push(creation);
 }
