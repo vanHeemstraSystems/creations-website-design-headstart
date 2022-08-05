@@ -1,47 +1,47 @@
 import React,
-       {useCallback}       from 'react';
+       {useCallback}         from 'react';
 
 import {useSelector,
-        useDispatch}       from 'react-redux'
-import {makeStyles}        from '@material-ui/core/styles';
-import {useForWiderDevice} from 'util/responsiveBreakpoints';
+        useDispatch}         from 'react-redux'
+import {makeStyles}          from '@material-ui/core/styles';
+import {useForWiderDevice}   from 'util/responsiveBreakpoints';
 
-import _eateriesAct        from '../actions';
-import * as _eateriesSel   from '../state';
+import _creationsAct         from '../actions';
+import * as _creationsSel    from '../state';
 
-import Link                from '@material-ui/core/Link';
-import LinkIcon            from '@material-ui/icons/Link';
-import List                from '@material-ui/core/List';
-import ListItem            from '@material-ui/core/ListItem';
-import ListItemIcon        from '@material-ui/core/ListItemIcon';
-import ListItemText        from '@material-ui/core/ListItemText';
-import NavigationIcon      from '@material-ui/icons/Navigation';
-import RestaurantIcon      from '@material-ui/icons/Restaurant';
-import Table               from '@material-ui/core/Table';
-import TableBody           from '@material-ui/core/TableBody';
-import TableCell           from '@material-ui/core/TableCell';
-import TableHead           from '@material-ui/core/TableHead';
-import TableRow            from '@material-ui/core/TableRow';
-import Typography          from '@material-ui/core/Typography';
+import Link                  from '@material-ui/core/Link';
+import LinkIcon              from '@material-ui/icons/Link';
+import List                  from '@material-ui/core/List';
+import ListItem              from '@material-ui/core/ListItem';
+import ListItemIcon          from '@material-ui/core/ListItemIcon';
+import ListItemText          from '@material-ui/core/ListItemText';
+import NavigationIcon        from '@material-ui/icons/Navigation';
+import RestaurantIcon        from '@material-ui/icons/Restaurant';
+import Table                 from '@material-ui/core/Table';
+import TableBody             from '@material-ui/core/TableBody';
+import TableCell             from '@material-ui/core/TableCell';
+import TableHead             from '@material-ui/core/TableHead';
+import TableRow              from '@material-ui/core/TableRow';
+import Typography            from '@material-ui/core/Typography';
 
-import EateryDetailScreen  from './EateryDetailScreen';
-import SplashScreen        from 'util/SplashScreen';
+import CreationDetailScreen  from './CreationDetailScreen';
+import SplashScreen          from 'util/SplashScreen';
 
 
 /**
- * EateriesListScreen displaying a set of eateries (possibly filtered).
+ * CreationsListScreen displaying a set of creations (possibly filtered).
  */
-export default function EateriesListScreen() {
+export default function CreationsListScreen() {
 
-  const filteredEateries = useSelector((appState) => _eateriesSel.getFilteredEateries(appState), []);
-  const filter           = useSelector((appState) => _eateriesSel.getListViewFilter(appState),   []);
-  const selectedEatery   = useSelector((appState) => _eateriesSel.getSelectedEatery(appState),   []);
-  const spinMsg          = useSelector((appState) => _eateriesSel.getSpinMsg(appState),          []);
+  const filteredCreations = useSelector((appState) => _creationsSel.getFilteredEateries(appState), []);
+  const filter            = useSelector((appState) => _creationsSel.getListViewFilter(appState),   []);
+  const selectedCreation  = useSelector((appState) => _creationsSel.getSelectedCreation(appState),   []);
+  const spinMsg           = useSelector((appState) => _creationsSel.getSpinMsg(appState),          []);
 
   const dispatch    = useDispatch();
-  const showDetail  = useCallback((eateryId) => {
-    //console.log(`xx showDetail for ${eateryId}`);
-    dispatch( _eateriesAct.viewDetail(eateryId) );
+  const showDetail  = useCallback((creationId) => {
+    //console.log(`xx showDetail for ${creationId}`);
+    dispatch( _creationsAct.viewDetail(creationId) );
   }, []);
 
   const isWiderDevice = useForWiderDevice();
@@ -49,7 +49,7 @@ export default function EateriesListScreen() {
   const classes = useStyles();
 
   // no-op if our pool entries are NOT yet retrieved
-  if (!filteredEateries) {
+  if (!filteredCreations) {
     return <SplashScreen msg="... waiting for pool entries"/>;
   }
 
@@ -66,11 +66,11 @@ export default function EateriesListScreen() {
 
     const content = [];
 
-    filteredEateries.forEach( eatery => {
+    filteredCreations.forEach( creation => {
 
       // optionally supply sub-header when ordered by distance
-      if (orderByDistance && eatery.distance !== currentDistance) {
-        currentDistance = eatery.distance;
+      if (orderByDistance && creation.distance !== currentDistance) {
+        currentDistance = creation.distance;
         const subTxt = `${currentDistance} mile${currentDistance===1?'':'s'}`;
         content.push((
           <ListItem key={`subheader${currentDistance}`}
@@ -85,11 +85,11 @@ export default function EateriesListScreen() {
 
       // supply our primary entry content
       content.push((
-        <ListItem key={eatery.id}
+        <ListItem key={creation.id}
                   dense
                   button
                   divider
-                  onClick={()=>showDetail(eatery.id)}>
+                  onClick={()=>showDetail(creation.id)}>
           <ListItemIcon>
             <RestaurantIcon/>
           </ListItemIcon>
@@ -98,15 +98,15 @@ export default function EateriesListScreen() {
               primary={
                 <Typography variant="h6"
                   noWrap>
-                  {eatery.name}
+                  {creation.name}
                   <Typography display="inline" noWrap>
-                    &nbsp;({`${eatery.distance} mile${eatery.distance===1?'':'s'}`})
+                    &nbsp;({`${creation.distance} mile${creation.distance===1?'':'s'}`})
                   </Typography>
                 </Typography>
               }
               secondary={
                 <Typography variant="subtitle1" noWrap>
-                  {eatery.addr}
+                  {creation.addr}
                 </Typography>
               }/>
         </ListItem>
@@ -126,26 +126,26 @@ export default function EateriesListScreen() {
         <TableHead>
           <TableRow>
             {orderByDistance && <TableCell className={classes.tableHeader}>Miles</TableCell>}
-            <TableCell className={classes.tableHeader}>Eatery</TableCell>
+            <TableCell className={classes.tableHeader}>Creation</TableCell>
             <TableCell className={classes.tableHeader}>Phone</TableCell>
             {!orderByDistance && <TableCell className={classes.tableHeader}>Miles</TableCell>}
             <TableCell className={classes.tableHeader}>Address</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          { filteredEateries.map( eatery => (
-              <TableRow key={eatery.id}
+          { filteredCreations.map( creation => (
+              <TableRow key={creation.id}
                         hover
-                        onClick={()=>showDetail(eatery.id)}>
+                        onClick={()=>showDetail(creation.id)}>
 
-                {orderByDistance && <TableCell align="right">{eatery.distance}</TableCell>}
+                {orderByDistance && <TableCell align="right">{creation.distance}</TableCell>}
 
                 <TableCell>
-                  {eatery.name}
-                  {eatery.website !== 'not-in-search' &&
+                  {creation.name}
+                  {creation.website !== 'not-in-search' &&
                    <>
                      &nbsp;
-                     <Link href={eatery.website}
+                     <Link href={creation.website}
                            target="_blank"
                            color="inherit"
                            underline="none">
@@ -155,18 +155,18 @@ export default function EateriesListScreen() {
                   }
                 </TableCell>
 
-                <TableCell><Typography variant="body2" noWrap>{eatery.phone}</Typography></TableCell>
+                <TableCell><Typography variant="body2" noWrap>{creation.phone}</Typography></TableCell>
 
-                {!orderByDistance && <TableCell align="right">{eatery.distance}</TableCell>}
+                {!orderByDistance && <TableCell align="right">{creation.distance}</TableCell>}
 
                 <TableCell>
-                  <Link href={eatery.navUrl}
+                  <Link href={creation.navUrl}
                         target="_blank"
                         color="inherit"
                         underline="none">
                     <NavigationIcon className={classes.icon}/>
                   </Link> &nbsp;
-                  {eatery.addr}
+                  {creation.addr}
                 </TableCell>
 
               </TableRow>
@@ -177,7 +177,7 @@ export default function EateriesListScreen() {
   }
 
   //***
-  //*** render our EateriesListScreen
+  //*** render our CreationsListScreen
   //***
 
   const ListContent = () => isWiderDevice ? contentAsTable() : contentAsList();
@@ -186,7 +186,7 @@ export default function EateriesListScreen() {
     <>
       <ListContent/>
       {spinMsg        && <SplashScreen msg={spinMsg}/>}
-      {selectedEatery && <EateryDetailScreen eatery={selectedEatery}/>}
+      {selectedCreation && <CreationDetailScreen creation={selectedCreation}/>}
     </>
   );
 }
