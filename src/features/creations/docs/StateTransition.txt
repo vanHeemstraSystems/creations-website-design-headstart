@@ -1,0 +1,95 @@
+********************************************************************************
+* State Transition
+********************************************************************************
+
+This document highlights how actions, logic, and reducers interact
+together to maintain this feature's state (a text document is used to
+accommodate the wide free-format content).
+
+TODO: Verify this (may have changed in feature migration)
+
+Actions (see: actions.js)                        Logic (see: logic.js)                                Reducer (see: state.js)
+==============================================   ===================================================  ===============================
+creations
+
+  .dbPool
+                                                      
+    .changed(creations) ............................................................................  - retain appState.creations.dbPool (from action.creations)
+ 
+    .add(creationId) ...............................................................................  - NO NEED TO DO ANYTHING, due to our real-time notifications
+                                           addToPoolPrep:                                               ... we attempted to retain appState.eateries.dbPool[eateryId] with temporary entry
+                                           =============                                                    in an attempt to make "discovery check box" faster (but IT DIDN'T HELP)
+                                             - discoveryService.fetchCreationDetail(creationId)                 ... src/appState/dbPool.js
+                                                 work: DISPATCH .creationDetail(creation)                       // temporal entry DONE STRICTLY to show up faster in "discovery check box" 
+                                                                                                                // ... will be followed up by real entry (from our DB real-time notifications)
+                                                                                                                [actions.creations.dbPool.add]: (state, action) => ( {...state, [action.creationId]: tempEatery(action.creationId)} ),
+                                                                                                                ...
+                                                                                                                const tempMsg = 'temporary entry (waiting for DB)';
+                                                                                                                const tempEatery = (id) => ({
+                                                                                                                  id,
+                                                                                                                  name:    tempMsg,
+                                                                                                                  phone:   tempMsg,
+                                                                                                                  loc:     {lat:1, lng:1},
+                                                                                                                  addr:    tempMsg,
+                                                                                                                  navUrl:  tempMsg,
+                                                                                                                  website: tempMsg,
+                                                                                                                });
+ 
+      .creationDetail(creation) ....................................................................  - NO NEED TO DO ANYTHING, due to our DB real-time notifications
+                                           addToPool:
+                                           =========
+                                             - fassets.eateryService.addEatery(action.eatery)
+ 
+ 
+    .remove(creationId) ............................................................................  - NO NEED TO DO ANYTHING, due to our real-time notifications
+                                           removeFromPool:                                              ... we tried deleting appState.creations.dbPool[creationId] of temporary entry
+                                           ==============                                                   in an attempt to make "discovery check box" faster (but IT DIDN'T HELP)
+                                             - fassets.creationService.removeCreation(action.creationId)
+ 
+ 
+  .filterForm
+    > iForm logic (auto-generated)         > iForm logic (auto-generated)                             > iForm logic (auto-generated)
+    .open([domain] [,formMsg])                    
+    .fieldChanged(fieldName, value)               
+    .fieldTouched(fieldName)                      
+    .process(values, domain) .......................................................................  - retain appState.creations.listView.filter  (from action.domain)
+                                           processFilter:
+                                           =============
+                                             DISPATCH view.change('eatery')
+                                             DISPATCH eatery.filterForm.close()
+      .reject(msgs)
+    .close()
+ 
+ 
+  .viewDetail(creationId) ..........................................................................  - retain appState.creations.selectedCreationId (from action.creationId)
+
+    .close() .......................................................................................  - retain appState.creations.selectedCreationId = null
+ 
+ 
+  .spin ............................................................................................  - retain appState.creations.spin (from action.spinMsg)
+                                           spin:
+                                           ====
+                                             transform():                                           
+                                             ---------
+                                               supplement action.spinMsg
+                                             process():
+                                             ---------
+                                               timeout (x secs)
+                                                 DISPATCH actions.creations.spin.complete(creationId)
+ 
+    .complete(creationId) ............................................................................  - retain appState.creations.spin = null
+                                           spinComplete:
+                                           ============
+                                             DISPATCH actions.creations.viewDetail(creationId)
+
+
+** cross-feature-communication: **
+  fassets.actions.userProfileChanged(user) .........................................................  - NONE
+                                           monitorDbPool:
+                                           =============
+                                             > real-time monitor of creations DB:
+                                             fassets.creationService.monitorDbCreationPool(action.user.pool,
+                                                                                       fassets.sel.getLocation(getState()),
+                                                                                       monitorCB)
+                                             > monitorCB: broadcast changes in our creations (or the initial population)
+                                             DISPATCH actions.dbPool.changed(creations)
