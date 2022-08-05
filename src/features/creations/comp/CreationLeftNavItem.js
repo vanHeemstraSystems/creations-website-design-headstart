@@ -1,11 +1,11 @@
 import React,
-       {useCallback} from 'react';
+       {useCallback}  from 'react';
 
-import {useFassets}  from 'feature-u';
-import {useDispatch} from 'react-redux'
+import {useFassets}   from 'feature-u';
+import {useDispatch}  from 'react-redux'
 
-import _eateries     from '../featureName';
-import _eateriesAct  from '../actions';
+import _creations     from '../featureName';
+import _creationsAct  from '../actions';
 
 import {makeStyles}  from '@material-ui/core/styles';
 
@@ -19,14 +19,14 @@ import SettingsIcon             from '@material-ui/icons/Tune';           // pos
 import IconButton               from '@material-ui/core/IconButton';
 
 /**
- * EateryLeftNavItem: our Eatery entry into the LeftNav.
+ * CreationLeftNavItem: our Creation entry into the LeftNav.
  */
-export default function EateryLeftNavItem() {
+export default function CreationLeftNavItem() {
 
   const fassets      = useFassets();
   const dispatch     = useDispatch();
-  const changeView   = useCallback(() => dispatch( fassets.actions.changeView(_eateries) ), [fassets]);
-  const handleFilter = useCallback(() => dispatch( _eateriesAct.filterForm.open() ),        [fassets]);
+  const changeView   = useCallback(() => dispatch( fassets.actions.changeView(_creations) ), [fassets]);
+  const handleFilter = useCallback(() => dispatch( _creationsAct.filterForm.open() ),        [fassets]);
   const classes      = useStyles();
 
   // render our menu item
@@ -48,7 +48,7 @@ export default function EateryLeftNavItem() {
 
 const useStyles = makeStyles( theme => ({
   major: {
-    color: theme.palette.grey.A200, // light grey (or redish: theme.palette.secondary.main
+    color: theme.palette.grey.A200, // light grey (or redish: theme.palette.secondary.main)
   },
   minor:{
     color: theme.palette.primary.dark,   // bluish
