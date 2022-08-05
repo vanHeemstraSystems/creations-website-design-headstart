@@ -1,4 +1,6 @@
-# 200 - Categories
+# 200 - Requirements
+
+We will adopt the following categories as a starting point
 
 ## 100 - Company
 
