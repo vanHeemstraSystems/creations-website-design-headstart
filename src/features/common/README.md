@@ -8,7 +8,7 @@ The **common** directory is a collection of **app-neutral** features.
     - [**authServiceFirebase**](auth/subFeatures/authServiceFirebase/AuthServiceFirebase.js): the **real** AuthServiceAPI derivation based on Firebase
     - [**authServiceMock**](auth/subFeatures/authServiceMock/AuthServiceMock.js):             the **mock** AuthServiceAPI derivation
 - [**initFirebase**](initFirebase/README.md): initializes the Google Firebase service when WIFI is enabled
-- [**initGooglePlaces**](initGooglePlaces/README.md): initializes the Google Places service service when WIFI is enabled
+- [**initGooglePlaces**](initGooglePlaces/README.md): initializes the Google Places service when WIFI is enabled
 - [**location**](location/README.md): Initializes and promotes the GPS location for use by the app.
 - [**pwa**](pwa/README.md): orchestrates the Progressive Web App hooks (as defined by Create React App).
 - [**diagnostic**](diagnostic/README.md): a collection of **diagnostic-related** features
