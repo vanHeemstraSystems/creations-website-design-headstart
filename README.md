@@ -3,7 +3,7 @@ creations-website-design-headstart
 
 Based on "insomnia.rest" at https://insomnia.rest/
 
-Lets build it using Feature-Driven Development (FDD), using (feature-u](https://feature-u.js.org/cur/index.html)
+Lets build it using Feature-Driven Development (FDD), using [feature-u](https://feature-u.js.org/cur/index.html)
 
 ## 100 - Introduction
 
