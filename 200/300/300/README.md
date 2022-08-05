@@ -1,3 +1,3 @@
-# 200 - Documentation
+# 300 - Support
 
-Based on "Documentation" at https://docs.insomnia.rest/
+Based on "Support" at https://insomnia.rest/support
