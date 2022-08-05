@@ -4,7 +4,7 @@ Based on "Feature-Driven Development" at https://github.com/KevinAst/eatery-nod-
 
 ## 100 - Introduction
 
-The implementation of **eatery-nod-w** employs **features** through a utility called **[feature-u]**, that facilitates **feature-based
+The implementation of **eatery-nod-w** employs **features** through a utility called **[feature-u](https://feature-u.js.org/)**, that facilitates **feature-based
 solutions**, making it's features truly **plug-and-play**!
 
 **Feature Based Development** greatly improves code comprehension, because there is a direct correlation between the **problem space**
