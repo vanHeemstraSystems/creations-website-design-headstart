@@ -1,16 +1,16 @@
-import firebase         from 'firebase/app';
-import                       'firebase/database';
-import geodist          from 'geodist';
-import EateryServiceAPI from '../eateryService/EateryServiceAPI';
+import firebase           from 'firebase/app';
+import                         'firebase/database';
+import geodist            from 'geodist';
+import CreationServiceAPI from '../creationService/CreationServiceAPI';
 
 /**
- * EateryServiceFirebase is the **real** EateryServiceAPI derivation
+ * CreationServiceFirebase is the **real** CreationServiceAPI derivation
  * using the Firebase service APIs.
  * 
  * NOTE: This represents a persistent service of a real-time DB, where
  *       the monitored DB is retained between service invocations.
  */
-export default class EateryServiceFirebase extends EateryServiceAPI {
+export default class CreationServiceFirebase extends CreationServiceAPI {
 
   /**
    * Our persistent monitor that manages various aspects of a given pool.
@@ -23,23 +23,23 @@ export default class EateryServiceFirebase extends EateryServiceAPI {
 
 
   /**
-   * Monitor a set of eateries, within our real-time DB, as defined by
+   * Monitor a set of creations, within our real-time DB, as defined by
    * the supplied pool.  The real-time monitor is triggered both from
    * an initial population, and when data changes.
    * 
-   * @param {string} pool the eatery pool identifier to monitor
-   * (e.g. 'DateNightPool').
+   * @param {string} pool the creation pool identifier to monitor
+   * (e.g. 'CreationPool').
    * 
    * @param {(struct: {lat, lng})} baseLoc the location from which to
-   * calculate the distance to each eatery
+   * calculate the distance to each creation
    * 
    * @param {function} monitorCB the callback function that
-   * communicates the set of monitored eateries.  This function is
+   * communicates the set of monitored creations.  This function is
    * called both for an initial data population, and whenever data
    * changes.  It has the following signature:
-   *  + monitorCB(eateries): void
+   *  + monitorCB(creations): void
    */
-  monitorDbEateryPool(pool, baseLoc, monitorCB) {
+  monitorDbCreationPool(pool, baseLoc, monitorCB) {
 
     // close prior monitor (if any)
     this.curPoolMonitor.wrapUp();
@@ -53,83 +53,83 @@ export default class EateryServiceFirebase extends EateryServiceAPI {
       }
     };
 
-    // listen for eatery data changes in the specified pool
+    // listen for creation data changes in the specified pool
     this.curPoolMonitor.dbRef.on('value', (snapshot) => {
 
       // conditional logic accommodates an empty pool
       // ... a firebase DB philosophy is that it will NOT store empty data (or collections)
-      const eateries = snapshot.val() !== null ? snapshot.val() : {};
+      const creations = snapshot.val() !== null ? snapshot.val() : {};
 
-      // supplement eateries with distance from the supplied baseLoc (as the crow flies)
-      for (const eateryId in eateries) {
-        const eatery = eateries[eateryId];
-        eatery.distance = geodist([eatery.loc.lat, eatery.loc.lng], [baseLoc.lat, baseLoc.lng]);
+      // supplement creations with distance from the supplied baseLoc (as the crow flies)
+      for (const creationId in creations) {
+        const creation = creations[creationId];
+        creation.distance = geodist([creation.loc.lat, creation.loc.lng], [baseLoc.lat, baseLoc.lng]);
       }
 
       // notify our supplied monitorCB
-      // console.log(`xx EateryServiceFirebase.monitorDbEateryPool() -and- MOCK RECORDING ... eateries changed for pool '${this.curPoolMonitor.pool}': ${JSON.stringify(eateries)}`);
-      monitorCB(eateries);
+      // console.log(`xx CreationServiceFirebase.monitorDbCreationPool() -and- MOCK RECORDING ... creations changed for pool '${this.curPoolMonitor.pool}': ${JSON.stringify(creations)}`);
+      monitorCB(creations);
 
     });
   }
 
 
   /**
-   * Add new Eatery to the DB being monitored (asynchronously).
+   * Add new Creation to the DB being monitored (asynchronously).
    *
    * This method can only be called, once a successful
-   * monitorDbEateryPool() has been established, because of the
+   * monitorDbCreationPool() has been established, because of the
    * persistent nature of this service.
    * 
-   * @param {Eatery} eatery the eatery entry to add
+   * @param {Creation} creation the creation entry to add
    */
-  async addEatery(eatery) {
+  async addCreation(creation) {
     // verify we are monitoring a pool
     if (!this.curPoolMonitor.pool) {
       // unexpected condition
-      throw new Error('***ERROR*** (within app logic) EateryServiceFirebase.addEatery(): may only be called once a successful monitorDbEateryPool() has completed.')
-              .defineAttemptingToMsg('add an Eatery to the DB');
+      throw new Error('***ERROR*** (within app logic) CreationServiceFirebase.addCreation(): may only be called once a successful monitorDbCreationPool() has completed.')
+              .defineAttemptingToMsg('add a Creation to the DB');
     }
 
     try {
-      // add the eatery to our DB pool
-      // console.log(`xx EateryServiceFirebase.addEatery() adding eatery: /pools/${this.curPoolMonitor.pool}/${eatery.id}`);
-      const dbRef = firebase.database().ref(`/pools/${this.curPoolMonitor.pool}/${eatery.id}`);
-      await dbRef.set(eatery);
+      // add the creation to our DB pool
+      // console.log(`xx CreationServiceFirebase.addCreation() adding creation: /pools/${this.curPoolMonitor.pool}/${creation.id}`);
+      const dbRef = firebase.database().ref(`/pools/${this.curPoolMonitor.pool}/${creation.id}`);
+      await dbRef.set(creation);
     }
     catch(err) {
       // re-throw unexpected error with qualifier
-      throw err.defineAttemptingToMsg(`add eatery (${eatery.name}) to pool ${this.curPoolMonitor.pool}`);
+      throw err.defineAttemptingToMsg(`add creation (${creation.name}) to pool ${this.curPoolMonitor.pool}`);
     }
   }
 
 
   /**
-   * Remove the supplied eateryId from the DB being monitored (asynchronously).
+   * Remove the supplied creationId from the DB being monitored (asynchronously).
    *
    * This method can only be called, once a successful
-   * monitorDbEateryPool() has been established, because of the
+   * monitorDbCreationPool() has been established, because of the
    * persistent nature of this service.
    * 
-   * @param {number} eateryId the eatery id to remove
+   * @param {number} creationId the creation id to remove
    */
-  async removeEatery(eateryId) {
+  async removeCreation(creationId) {
     // verify we are monitoring a pool
     if (!this.curPoolMonitor.pool) {
       // unexpected condition
-      throw new Error('***ERROR*** (within app logic) EateryServiceFirebase.removeEatery(): may only be called once a successful monitorDbEateryPool() has completed.')
-              .defineAttemptingToMsg('remove an Eatery from the DB');
+      throw new Error('***ERROR*** (within app logic) CreationServiceFirebase.removeCreation(): may only be called once a successful monitorDbCreationPool() has completed.')
+              .defineAttemptingToMsg('remove a Creation from the DB');
     }
 
     try {
-      // remove the eatery to our DB pool
-      // console.log(`xx EateryServiceFirebase.removeEatery() removing eatery: /pools/${this.curPoolMonitor.pool}/${eateryId}`);
-      const dbRef = firebase.database().ref(`/pools/${this.curPoolMonitor.pool}/${eateryId}`);
+      // remove the creation to our DB pool
+      // console.log(`xx CreationServiceFirebase.removeCreation() removing creation: /pools/${this.curPoolMonitor.pool}/${creationId}`);
+      const dbRef = firebase.database().ref(`/pools/${this.curPoolMonitor.pool}/${creationId}`);
       await dbRef.set(null);
     }
     catch(err) {
       // re-throw unexpected error with qualifier
-      throw err.defineAttemptingToMsg(`remove an eatery from pool ${this.curPoolMonitor.pool}`);
+      throw err.defineAttemptingToMsg(`remove a creation from pool ${this.curPoolMonitor.pool}`);
     }
   }
 
