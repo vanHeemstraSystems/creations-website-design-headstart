@@ -1,43 +1,43 @@
-import React                 from 'react';
+import React                   from 'react';
 
 import {useSelector,
-        useDispatch}         from 'react-redux'
-import {makeStyles}          from '@material-ui/core/styles';
-import {useForCellPhone}     from 'util/responsiveBreakpoints';
+        useDispatch}           from 'react-redux'
+import {makeStyles}            from '@material-ui/core/styles';
+import {useForCellPhone}       from 'util/responsiveBreakpoints';
 
-import eateryFilterFormMeta  from '../eateryFilterFormMeta';
-import ITextField            from 'util/iForms/comp/ITextField';
-import IRadioField           from 'util/iForms/comp/IRadioField';
+import creationFilterFormMeta  from '../creationFilterFormMeta';
+import ITextField              from 'util/iForms/comp/ITextField';
+import IRadioField             from 'util/iForms/comp/IRadioField';
 
-import Button                from '@material-ui/core/Button';
-import CloseIcon             from '@material-ui/icons/Close';
-import Dialog                from '@material-ui/core/Dialog';
-import DialogContent         from '@material-ui/core/DialogContent';
-import DialogContentText     from '@material-ui/core/DialogContentText';
-import DialogTitle           from '@material-ui/core/DialogTitle';
-import FilterIcon            from '@material-ui/icons/FilterList';
-import FormHelperText        from '@material-ui/core/FormHelperText';
-import IconButton            from '@material-ui/core/IconButton';
-import InProgress            from '@material-ui/core/LinearProgress';  // -or- '@material-ui/core/CircularProgress';
-import Typography            from '@material-ui/core/Typography';
-import {TransitionSlide}     from 'util/Transition';
-import CenterItems           from 'util/CenterItems';
+import Button                  from '@material-ui/core/Button';
+import CloseIcon               from '@material-ui/icons/Close';
+import Dialog                  from '@material-ui/core/Dialog';
+import DialogContent           from '@material-ui/core/DialogContent';
+import DialogContentText       from '@material-ui/core/DialogContentText';
+import DialogTitle             from '@material-ui/core/DialogTitle';
+import FilterIcon              from '@material-ui/icons/FilterList';
+import FormHelperText          from '@material-ui/core/FormHelperText';
+import IconButton              from '@material-ui/core/IconButton';
+import InProgress              from '@material-ui/core/LinearProgress';  // -or- '@material-ui/core/CircularProgress';
+import Typography              from '@material-ui/core/Typography';
+import {TransitionSlide}       from 'util/Transition';
+import CenterItems             from 'util/CenterItems';
 
 
 /**
- * EateryFilterScreen: gather filter information (selection criteria) 
- * for our eatery pool view.
+ * CreationFilterScreen: gather filter information (selection criteria) 
+ * for our creation pool view.
  */
-export default function EateryFilterScreen() {
+export default function CreationFilterScreen() {
 
   const dispatch    = useDispatch();
-  const formState   = useSelector((appState) => eateryFilterFormMeta.formStateSelector(appState), []);
+  const formState   = useSelector((appState) => creationFilterFormMeta.formStateSelector(appState), []);
 
   const isCellPhone = useForCellPhone();
 
   const classes     = useStyles();
 
-  const iForm = eateryFilterFormMeta.IForm(formState, dispatch); // AI: unsure if I should wrap in useMemo()
+  const iForm = creationFilterFormMeta.IForm(formState, dispatch); // AI: unsure if I should wrap in useMemo()
 
   const formLabel       = iForm.getLabel();
   const formInProcess   = iForm.inProcess();
@@ -82,8 +82,8 @@ export default function EateryFilterScreen() {
           <div className={classes.entry}>
             <IRadioField {...sortOrderRadioProps}
                          row
-                         helperText="sort entries by Restaurant (name) or Distance">
-              <IRadioField.Op value="name"     label="Restaurant" {...sortOrderRadioProps}/>
+                         helperText="sort entries by Place (name) or Distance">
+              <IRadioField.Op value="name"     label="Place" {...sortOrderRadioProps}/>
               <IRadioField.Op value="distance" label="Distance" {...sortOrderRadioProps}/>
             </IRadioField>
           </div>
